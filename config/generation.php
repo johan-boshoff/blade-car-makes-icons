@@ -1,7 +1,7 @@
 <?php
 
 $svgNormalization = static function (string $tempFilepath, array $iconSet) {
-    $dom = new DOMDocument();
+    $dom = new DOMDocument;
     $dom->formatOutput = false;
     $dom->preserveWhiteSpace = false;
     $dom->load($tempFilepath, LIBXML_NONET);
