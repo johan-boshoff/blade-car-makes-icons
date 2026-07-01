@@ -1,24 +1,51 @@
 <?php
 
-use Codeat3\BladeIconGeneration\IconProcessor;
-
 $svgNormalization = static function (string $tempFilepath, array $iconSet) {
+    $dom = new DOMDocument();
+    $dom->formatOutput = false;
+    $dom->preserveWhiteSpace = false;
+    $dom->load($tempFilepath, LIBXML_NONET);
 
-    // perform generic optimizations
-    $iconProcessor = new IconProcessor($tempFilepath, $iconSet);
-    $iconProcessor
-        ->optimize(function (DOMElement $element) {
-            // Remove all child style elements
-            $styles = $element->getElementsByTagName('style');
-            foreach ($styles as $style) {
-                $style->parentNode->removeChild($style);
-            }
-        })
-        ->postOptimizationAsString(function ($svgLine) {})
-        ->save(filenameCallable: function ($filename) {
-            return str_replace(' ', '-', $filename);
-        });
+    $svg = $dom->getElementsByTagName('svg')->item(0);
 
+    if (! $svg instanceof DOMElement) {
+        return;
+    }
+
+    while ($style = $svg->getElementsByTagName('style')->item(0)) {
+        $style->parentNode->removeChild($style);
+    }
+
+    foreach ((new DOMXPath($dom))->query('//comment()') as $comment) {
+        $comment->parentNode->removeChild($comment);
+    }
+
+    foreach (['width', 'height', 'class', 'style', 'id'] as $attribute) {
+        $svg->removeAttribute($attribute);
+    }
+
+    if ($iconSet['is-solid'] ?? false) {
+        $svg->setAttribute('fill', 'currentColor');
+    }
+
+    foreach ($iconSet['custom-attributes'] ?? [] as $attribute => $value) {
+        $svg->setAttribute($attribute, $value);
+    }
+
+    $svgLine = $dom->saveXML();
+    $svgLine = preg_replace('/<\?xml.*\?>/', '', $svgLine);
+    $svgLine = preg_replace('/\s+/', ' ', trim($svgLine));
+    $svgLine = preg_replace('/>\s+</', '><', $svgLine);
+
+    $filename = pathinfo($tempFilepath, PATHINFO_FILENAME);
+    $filename = strtolower(trim(preg_replace('/[^A-Za-z0-9]+/', '-', $filename), '-'));
+    $destinationPath = dirname($tempFilepath).DIRECTORY_SEPARATOR.$filename.'.svg';
+
+    file_put_contents($destinationPath, $svgLine);
+
+    if ($destinationPath !== $tempFilepath) {
+        unlink($tempFilepath);
+    }
 };
 
 return [
