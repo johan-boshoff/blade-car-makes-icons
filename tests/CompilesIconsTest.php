@@ -7,12 +7,10 @@ namespace Tests;
 use BladeUI\Icons\BladeIconsServiceProvider;
 use JohanBoshoff\CarMakesIcons\BladeCarMakesIconsServiceProvider;
 use Orchestra\Testbench\TestCase;
-use PHPUnit\Framework\Attributes\Test;
 
 class CompilesIconsTest extends TestCase
 {
-    /** @test */
-    public function it_compiles_a_single_anonymous_component()
+    public function test_it_compiles_a_single_anonymous_component()
     {
         $result = svg('carmakes-mitsubishi')->toHtml();
 
@@ -24,8 +22,7 @@ class CompilesIconsTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
-    /** @test */
-    public function it_can_add_classes_to_icons()
+    public function test_it_can_add_classes_to_icons()
     {
         $result = svg('carmakes-mitsubishi', 'w-6 h-6 text-gray-500')->toHtml();
 
@@ -36,8 +33,7 @@ class CompilesIconsTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
-    /** @test */
-    public function it_can_add_styles_to_icons()
+    public function test_it_can_add_styles_to_icons()
     {
         $result = svg('carmakes-mitsubishi', ['style' => 'color: #555'])->toHtml();
 
@@ -46,6 +42,14 @@ class CompilesIconsTest extends TestCase
             SVG;
 
         $this->assertSame($expected, $result);
+    }
+
+    public function test_it_renders_icons_as_blade_components()
+    {
+        $this->blade('<x-carmakes-mitsubishi class="w-6 h-6" />')
+            ->assertSeeHtml('<svg class="w-6 h-6"')
+            ->assertSeeHtml('viewBox="0 0 80.4 80.4"')
+            ->assertSeeHtml('fill="currentColor"');
     }
 
     protected function getPackageProviders($app)

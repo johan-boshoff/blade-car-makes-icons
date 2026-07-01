@@ -48,19 +48,19 @@ php artisan vendor:publish --tag=blade-car-makes-icons-config
 Icons can be used as self-closing Blade components which will be compiled to SVG icons:
 
 ```blade
-<x-car-makes-icon-acura/>
+<x-carmakes-acura/>
 ```
 
 You can also pass classes to your icon components:
 
 ```blade
-<x-car-makes-icon-acura class="w-6 h-6 text-gray-500"/>
+<x-carmakes-acura class="w-6 h-6 text-gray-500"/>
 ```
 
 And even use inline styles:
 
 ```blade
-<x-car-makes-icon-acura style="color: #555"/>
+<x-carmakes-acura style="color: #555"/>
 ```
 
 ### Raw SVG Icons
@@ -74,7 +74,7 @@ php artisan vendor:publish --tag=blade-car-makes-icons --force
 Then use them in your views like:
 
 ```blade
-<img src="{{ asset('vendor/blade-car-makes-icons/o-acura.svg') }}" width="10" height="10"/>
+<img src="{{ asset('vendor/blade-car-makes-icons/acura.svg') }}" width="10" height="10"/>
 ```
 
 ## Changelog
